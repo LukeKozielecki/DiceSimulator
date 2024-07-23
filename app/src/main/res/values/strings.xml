@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Dice Simulator</string>
+    <string name="interim_lorem_ipsum_short">LoremIpsum</string>
 </resources>
