@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -17,6 +18,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
@@ -25,27 +28,41 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import luke.koz.dicesimulator.R
+import androidx.lifecycle.viewmodel.compose.viewModel
+import luke.koz.dicesimulator.dicesimulator.viewmodel.DiceState
+import luke.koz.dicesimulator.dicesimulator.viewmodel.DiceViewModel
 import luke.koz.dicesimulator.ui.theme.DiceSimulatorTheme
 
 @Composable
 fun DiceScreen(
     modifier: Modifier = Modifier,
-//    viewModel: ViewModel
+    diceViewModel: DiceViewModel = viewModel()
 ) {
+    val diceUiState by diceViewModel.diceUiState.collectAsState()
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        DiceCompleteElement {
-
-        }
+        DiceCompleteElement(
+            onClickListener = {
+                diceViewModel.recalculateDiceState(2)
+            },
+            diceViewModel = diceViewModel,
+            coinUiStateBackground = diceUiState.coinUiStateBackground,
+            coinUiStateForeground = diceUiState.coinUiStateBackground,
+        )
     }
 }
 
 @Composable
-fun DiceCompleteElement(modifier: Modifier = Modifier, onClickListener : () -> Unit) {
+fun DiceCompleteElement(
+    modifier: Modifier = Modifier,
+    diceViewModel: DiceViewModel,
+    onClickListener: () -> Unit,
+    coinUiStateBackground: DiceState,
+    coinUiStateForeground: DiceState
+) {
     Box(modifier = modifier
         .aspectRatio(1f)
         .wrapContentSize(Center)) {
@@ -61,8 +78,8 @@ fun DiceCompleteElement(modifier: Modifier = Modifier, onClickListener : () -> U
             ) {
                 DiceImage(
                     onClickListener = onClickListener,
-                    backgroundPainterResource = R.drawable.ic_pre_roll_background,
-                    foregroundPainterResource = R.drawable.ic_launcher_foreground,
+                    backgroundPainterResource = diceViewModel.fetchCoinRes(coinUiStateBackground, true),
+                    foregroundPainterResource = diceViewModel.fetchCoinRes(coinUiStateForeground, false),
                     modifier = modifier.padding(vertical = 60.dp)
                 )
             }
@@ -94,7 +111,9 @@ fun DiceImage(
                 .clip(CircleShape)
                 .clickable {
                     onClickListener()
+                    Log.d("CoinToss", "Coin was pressed")
                 }
+                .size(108.dp)
         )
     }
 }
@@ -115,16 +134,36 @@ fun DiceRollResultHistory(modifier: Modifier = Modifier, resultsList: MutableLis
 @Preview (showBackground = true)
 @Composable
 private fun DiceRollResultHistoryPreview() {
-    val interimResultsList : MutableList<String> = mutableListOf("Heads", "Tails", "Heads", "Heads")
+    val interimResultsList : MutableList<String> = mutableListOf(
+        "Heads",
+        "Tails",
+        "Heads",
+        "Heads",
+    )
     DiceRollResultHistory(resultsList = interimResultsList)
 }
 
 @Preview (showBackground = false)
 @Composable
 private fun DiceCompleteElementPreview() {
+    val viewModel : DiceViewModel = viewModel()
+    val diceUiState by viewModel.diceUiState.collectAsState()
     DiceSimulatorTheme {
-        DiceCompleteElement(onClickListener = {
-            Log.d("CoinToss", "Coin was tapped")
-        })
+        DiceCompleteElement(
+            onClickListener = {
+                Log.d("CoinToss", "Preview coin was tapped")
+            },
+            diceViewModel = viewModel,
+            coinUiStateBackground = diceUiState.coinUiStateBackground,
+            coinUiStateForeground = diceUiState.coinUiStateBackground,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun DiceScreenPreview() {
+    DiceSimulatorTheme {
+        DiceScreen()
     }
 }
