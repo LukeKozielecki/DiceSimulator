@@ -17,16 +17,14 @@ import luke.koz.dicesimulator.R
 import luke.koz.dicesimulator.ui.theme.DiceSimulatorTheme
 
 @Composable
-fun HubScreen(modifier: Modifier = Modifier) {
+fun HubScreen(modifier: Modifier = Modifier, destinationList: List<()->Unit>) {
     Column (modifier = modifier) {
-        HubDestinationElement()
-        HubDestinationElement()
-        HubDestinationElement()
+        HubDestinationElement(destinationList = destinationList)
     }
 }
 
 @Composable
-fun HubDestinationElement(modifier: Modifier = Modifier) {
+fun HubDestinationElement(modifier: Modifier = Modifier, destinationList: List<()->Unit>) {
     Card (modifier = modifier
         .fillMaxWidth()
         .padding(8.dp)){
@@ -36,7 +34,10 @@ fun HubDestinationElement(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Text(text = "Go to destination")
-            Button(onClick = { /*TODO*/ }, modifier = modifier) {
+            Button(
+                onClick = destinationList[0]::invoke,
+                modifier = modifier
+            ) {
                 Text(text = stringResource(R.string.interim_lorem_ipsum_short))
             }
         }
@@ -47,6 +48,6 @@ fun HubDestinationElement(modifier: Modifier = Modifier) {
 @Composable
 private fun HubScreenPreview(modifier: Modifier = Modifier) {
     DiceSimulatorTheme {
-        HubScreen(modifier = modifier.padding(20.dp))
+        HubScreen(modifier = modifier.padding(20.dp), destinationList = listOf())
     }
 }

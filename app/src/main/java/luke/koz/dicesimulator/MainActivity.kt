@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import luke.koz.dicesimulator.dicehublocation.presentation.HubScreen
 import luke.koz.dicesimulator.ui.theme.DiceSimulatorTheme
+import luke.koz.dicesimulator.utils.navigation.AppNavigationHost
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,7 +19,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             DiceSimulatorTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    HubScreen(modifier = Modifier.padding(innerPadding))
+                    AppNavigationHost(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
