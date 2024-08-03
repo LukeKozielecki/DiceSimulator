@@ -12,4 +12,17 @@ sealed class NavRoutesSerializable{
 
     @Serializable
     object DiceScreen
+
+    @Serializable
+    object DiceScreenD4
+
+    @Serializable
+    object DiceScreenD6
+
+    @Serializable
+    object DiceScreenD12
+
+    @Serializable
+    object DiceScreenD20
+
 }
